@@ -5,18 +5,7 @@
         <v-data-table :headers="headers" :items="tujuan_pembelajaran" :items-per-page="5" class="elevation-5 mt-4">
             <!-- <template v-slot:item.no="{ index }">
                 {{ index + 1 }} </template> -->
-            <template v-slot:item.elemen_capaian="{ item }">
-                <template v-if="!item.isMerged">
-                    <span class="font-weight-bold">{{ item.elemen_capaian }}</span>
-                </template>
-                <template v-else>
-                    <template v-if="item.rowspan > 1">
-                        <span :rowspan="item.rowspan">{{ item.elemen_capaian }}</span>
-                    </template>
-                </template>
-            </template>
-
-
+        
             <template v-slot:item.tujuan_pembelajaran="{ item }">
                 <span class="d-inline-block text-truncate text-left" style="max-width: 600px;">{{
             item.tujuan_pembelajaran }}
@@ -309,50 +298,8 @@ const loadData = async () => {
     try {
         const response = await axios.get(`http://localhost:3000/kurikulum/${idMp}/tujuan_pembelajaran`)
         const data = response.data
-        // tujuan_pembelajaran.value = data
+        tujuan_pembelajaran.value = data
         // console.log("Data tujuan pembelajaran", data)
-
-        // Buat objek untuk menampung data yang sudah di-grupkan
-        let groupedData = {};
-        // Grupkan data berdasarkan elemen_capaian
-        data.forEach(item => {
-            if (!groupedData[item.elemen_capaian]) {
-                groupedData[item.elemen_capaian] = [];
-            }
-            groupedData[item.elemen_capaian].push(item);
-        });
-
-        // Inisialisasi hasil akhir yang akan digunakan di tabel
-        let result = [];
-
-        // Iterasi melalui objek yang sudah di-grupkan
-        for (const elemenCapaian in groupedData) {
-            if (groupedData.hasOwnProperty(elemenCapaian)) {
-                const group = groupedData[elemenCapaian];
-
-                // Tentukan jumlah baris (rowspan) untuk setiap grup
-                const rowspan = group.length;
-
-                // Iterasi untuk menambahkan data ke result dengan properti rowspan dan isMerged
-                group.forEach((item, index) => {
-                    if (index === 0) {
-                        result.push({
-                            ...item,
-                            rowspan: rowspan,  // Menambahkan rowspan ke elemen pertama dari grup
-                            isMerged: false,   // Menandai elemen pertama dari grup sebagai tidak digabungkan
-                        });
-                    } else {
-                        result.push({
-                            ...item,
-                            isMerged: true,  // Menandai elemen lain dari grup sebagai digabungkan
-                            nomor: null
-                        });
-                    }
-                });
-            }
-        }
-        tujuan_pembelajaran.value = result
-        // console.log(groupedData)
     } catch (error) {
         console.error("Error get data ", error)
     }
