@@ -3,17 +3,11 @@
         <MenuTitle msg="Menu | Kurikulum Capaian Pembelajaran" class="text-subtitle-1 font-weight-medium " />
 
         <v-data-table :headers="headers" :items="capaian_pembelajaran" :items-per-page="5" class="elevation-5 mt-4">
-            <template v-slot:item.no="{ index }">
-                {{ index + 1 }} </template>
-
-            <template v-slot:item.capaian_pembelajaran="{ item }">
-                <ol>
-                    <li v-for="(item, index) in item.capaian_pembelajaran" class="text-justify my-2 me-2 d-inline-block text-truncate" :key="index"  style="max-width: 650px;">{{ index+1 }}. {{ item }}</li>
-                </ol>
-            </template>
-
-            <template v-slot:item.elemen="{ item }">
-                <p class="text-justify my-2 me-2" style="max-width: 750px;">{{ item.elemen }}</p>
+            <template v-slot:item="{item}">
+                <tr v-for="(x, index) in item.capaian_pembelajaran" :key="index">
+                    <td v-if="index === 0" :rowspan="item.capaian_pembelajaran.length">{{ item.elemen }}</td>
+                    <td>{{ x }}</td>
+                </tr>
             </template>
 
             <template v-slot:top>
