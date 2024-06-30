@@ -7,8 +7,9 @@
                 {{ index + 1 }} </template>
 
             <template v-slot:item.capaian_pembelajaran="{ item }">
-                <p class="text-justify my-2 me-2 d-inline-block text-truncate" style="max-width: 650px;">{{
-            item.capaian_pembelajaran }}</p>
+                <ol>
+                    <li v-for="(item, index) in item.capaian_pembelajaran" class="text-justify my-2 me-2 d-inline-block text-truncate" :key="index"  style="max-width: 650px;">{{ index+1 }}. {{ item }}</li>
+                </ol>
             </template>
 
             <template v-slot:item.elemen="{ item }">
@@ -286,8 +287,24 @@ const loadData = async () => {
     try {
         const response = await axios.get(`http://localhost:3000/kurikulum/${idMp}/capaian_pembelajaran`)
         const data = response.data
-        capaian_pembelajaran.value = data
-        console.log(capaian_pembelajaran)
+        const groupedData = data.reduce((acc, item) => {
+            const { elemen, capaian_pembelajaran } = item;
+            if (!acc[elemen]) {
+                acc[elemen] = {
+                    elemen: elemen,
+                    capaian_pembelajaran: []
+                };
+            }
+            acc[elemen].capaian_pembelajaran.push(capaian_pembelajaran);
+            return acc;
+        }, {});
+
+        const result = Object.values(groupedData);
+
+        console.log(result);
+
+        capaian_pembelajaran.value = result
+        console.log(data)
     } catch (error) {
         console.error("Error get data", error)
     }
